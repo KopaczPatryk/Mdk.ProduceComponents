@@ -6,6 +6,7 @@ using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.Entities.Blocks;
 using SpaceEngineers.Game.ModAPI.Ingame;
 using System;
+using System.CodeDom;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -29,125 +30,71 @@ using VRageMath;
 
 namespace IngameScript
 {
-    enum Components
-    {
-        
-    }
-    class ItemConstant
-    {
-        
-    }
-    class DefinitionContants
-    {
-        const string ComponentTypeId = "MyObjectBuilder_Component/";
 
-        public static Dictionary<string, string> components = new Dictionary<string, string> {
-            { "Bulletproof Glass", "BulletproofGlass" },
-            { "Canvas", "Canvas" },
-            { "Computer", "Computer" },
-            { "Construction Comp.", "Construction" },
-            { "Detector Comp.", "Detector" },
-            { "Display", "Display" },
-            { "Engineer Plushie", "EngineerPlushie" },
-            { "Explosives", "Explosives" },
-            { "Girder", "Girder" },
-            { "Gravity Comp.", "GravityGenerator" },
-            { "Interior Plate", "InteriorPlate" },
-            { "Large Steel Tube", "LargeTube" },
-            { "Medical Comp.", "Medical" },
-            { "Metal Grid", "MetalGrid" },
-            { "Motor", "Motor" },
-            { "Power Cell", "PowerCell" },
-            { "Radio - comm Comp.", "RadioCommunication" },
-            { "Reactor Comp.", "Reactor" },
-            { "Saberoid Plushie", "SabiroidPlushie" },
-            { "Small Steel Tube", "SmallTube" },
-            { "Solar Cell", "SolarCell" },
-            { "Steel Plate", "SteelPlate" },
-            { "Superconductor", "Superconductor" },
-            { "Thruster Comp.", "Thrust" },
-            { "Zone Chip", "ZoneChip" },
-        };
-        
-        string getComponentDef()
-    }
 
     partial class Program : MyGridProgram
     {
         public IMyTextSurface MainScreen { get; private set; }
-        public List<MyDefinitionId> IngotDefs { get; private set; }
+        public List<Component> RelevantComponents { get; private set; }
 
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
             MainScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
-            List<string> componentNames = new List<string>();
+            
+            MainScreen.WriteText("");
 
-
-            List<string> IngotNames = new List<string>() {
-                "Iron",
-                "Cobalt",
-                "Gold",
-                "Ice",
-                "Iron",
-                "Magnesium",
-                "Nickel",
-                "Organic",
-                "Platinum",
-                "Scrap",
-                "Silicon",
-                "Silver",
-                "Stone",
-                "Uranium",
+             RelevantComponents = new List<Component>
+            {
+                Component.Display,
+                Component.BulletproofGlass,
+                Component.MetalGrid,
+                Component.Computer,
+                Component.ConstructionComp,
+                Component.Girder,
             };
 
-            var ingotDefNames = IngotNames.Select(name => $"MyObjectBuilder_Ore/{name}").ToList();
-
-            IngotDefs = ingotDefNames.Select(defName => MyDefinitionId.Parse(defName)).ToList();
         }
 
         public void Save()
         {
-            // Called when the program needs to save its state. Use
-            // this method to save your state to the Storage field
-            // or some other means. 
-            // 
-            // This method is optional and can be removed if not
-            // needed.
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            /*
-            IMyProductionBlock, IMyInventory
-                    IMyAssembler assembler = null;
-            IMyRefinery refinery = null;
 
-             */
-            //List<IMyRefinery> refineries = new List<IMyRefinery>();
-            //List<IMyInventory> cargos = new List<IMyInventory>();
-            //List<IMyEntity> inventories = new List<IMyEntity>();
             List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-
             GridTerminalSystem.GetBlocks(blocks);
 
-            var allInventories = blocks
+            var blocksWithInventories = blocks
                 .Where(block => block.CubeGrid == Me.CubeGrid)
                 .Where(block => block.HasInventory)
-                .Select(block => block.GetInventory());
+                .ToList();
+
+            var outputInventories = blocksWithInventories
+                .Where(block => block is IMyProductionBlock)
+                .Select(block => block.GetInventory())
+                .ToList();
+
+            var allInventories = blocksWithInventories
+                .Select(block => block.GetInventory())
+                .Concat(outputInventories).ToList();
 
             Dictionary<string, MyFixedPoint> quantities = new Dictionary<string, MyFixedPoint>();
 
-            foreach (var def in IngotDefs)
+            var relevant = DefinitionConstants.components.Where(comp => RelevantComponents.Contains(comp.Key)).Select(e=>e.Value).ToList();
+            
+            foreach (var def in relevant)
             {
                 var count = allInventories
-                    .Select(inv => inv.GetItemAmount(def))
-                    .Aggregate((a, b) => a + b);
+                 .Select(inv => inv.GetItemAmount(def.MyDefinitionId))
+                 .Aggregate((a, b) => a + b);
 
-                var name = def.SubtypeId.ToString();
+                var name = def.DisplayName;
                 quantities.Add(name, count);
             }
+
             StringBuilder sb = new StringBuilder();
 
             foreach (var quantity in quantities)

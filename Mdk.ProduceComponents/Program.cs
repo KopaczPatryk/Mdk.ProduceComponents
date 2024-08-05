@@ -1,60 +1,39 @@
-﻿using Sandbox.Game.Entities;
-using Sandbox.Game.EntityComponents;
-using Sandbox.Game.GameSystems;
-using Sandbox.ModAPI.Ingame;
+﻿using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.Entities.Blocks;
-using SpaceEngineers.Game.ModAPI.Ingame;
 using System;
-using System.CodeDom;
-using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Security.Policy;
 using System.Text;
-using System.Threading;
 using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRage.Noise.Combiners;
-using VRage.Scripting;
-using VRageMath;
 
 namespace IngameScript
 {
-
-
     partial class Program : MyGridProgram
     {
         public IMyTextSurface MainScreen { get; private set; }
-        public List<Component> RelevantComponents { get; private set; }
+        public List<Item> RelevantComponents { get; private set; }
 
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
             MainScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
-            
-            MainScreen.WriteText("");
 
-             RelevantComponents = new List<Component>
+            RelevantComponents = new List<Item>
             {
-                Component.Display,
-                Component.BulletproofGlass,
-                Component.MetalGrid,
-                Component.Computer,
-                Component.ConstructionComp,
-                Component.Girder,
+                Item.BulletproofGlass,
+                Item.Computer,
+                Item.ConstructionComp,
+                Item.Display,
+                Item.Girder,
+                Item.InteriorPlate,
+                Item.LargeSteelTube,
+                Item.MetalGrid,
+                Item.Motor,
+                Item.PowerCell,
+                Item.SmallSteelTube,
+                Item.SteelPlate,
             };
-
         }
 
         public void Save()
@@ -63,6 +42,7 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            MainScreen.WriteText("");
 
             List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
             GridTerminalSystem.GetBlocks(blocks);
@@ -74,35 +54,57 @@ namespace IngameScript
 
             var outputInventories = blocksWithInventories
                 .Where(block => block is IMyProductionBlock)
-                .Select(block => block.GetInventory())
+                .Cast<IMyProductionBlock>()
+                .Select(block => block.OutputInventory)
                 .ToList();
 
             var allInventories = blocksWithInventories
                 .Select(block => block.GetInventory())
                 .Concat(outputInventories).ToList();
 
-            Dictionary<string, MyFixedPoint> quantities = new Dictionary<string, MyFixedPoint>();
+            var countProvider = new InventoryManager(allInventories);
 
-            var relevant = DefinitionConstants.components.Where(comp => RelevantComponents.Contains(comp.Key)).Select(e=>e.Value).ToList();
-            
-            foreach (var def in relevant)
+            var assemblers = new List<IMyAssembler>();
+            GridTerminalSystem.GetBlocksOfType(assemblers);
+            assemblers.RemoveAll(block => block.CubeGrid != Me.CubeGrid);
+
+            string masterAssemblerName = "masterAssembler";
+
+            var masterAssembler = assemblers
+                .Where(assembler => assembler.CustomName == masterAssemblerName)
+                .First();
+
+            var nonMasterAssemblers = assemblers
+                .Where(assembler => assembler.CustomName != masterAssemblerName)
+                .ToList();
+
+            var assemblerManager = new AssemblerGroupManager(masterAssembler, nonMasterAssemblers);
+            assemblerManager.EnsureHierarchy();
+
+            foreach (var relevantComponent in RelevantComponents)
             {
-                var count = allInventories
-                 .Select(inv => inv.GetItemAmount(def.MyDefinitionId))
-                 .Aggregate((a, b) => a + b);
+                var quantity = countProvider.GetAvailableCount(relevantComponent);
+                var tasks = assemblerManager.PendingTasks(Echo);
+                MyFixedPoint scheduledCount;
 
-                var name = def.DisplayName;
-                quantities.Add(name, count);
+                if (tasks.ContainsKey(relevantComponent))
+                {
+                    scheduledCount = tasks[relevantComponent];
+                }
+                else
+                {
+                    scheduledCount = 0;
+                }
+
+                MyFixedPoint needed = 200 - (quantity + scheduledCount);
+
+                if (needed > 0)
+                {
+                    assemblerManager.EnqueueRecipeFor(relevantComponent, needed);
+                }
+
+                MainScreen.WriteText($"{DefinitionConstants.Components[relevantComponent].DisplayName}: {quantity} ({scheduledCount})\n", true);
             }
-
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var quantity in quantities)
-            {
-                sb.AppendLine($"{quantity.Key}: {quantity.Value}");
-            }
-
-            MainScreen.WriteText(sb);
         }
     }
 }

@@ -31,8 +31,9 @@ using VRageMath;
 
 namespace IngameScript
 {
-    public enum Component
+    public enum Item
     {
+        // Comps
         BulletproofGlass,
         Canvas,
         Computer,
@@ -58,9 +59,7 @@ namespace IngameScript
         Superconductor,
         ThrusterComp,
         ZoneChip,
-    }
-    public enum Ingot
-    {
+        //Metals
         Cobalt,
         Gold,
         Ice,
@@ -76,89 +75,82 @@ namespace IngameScript
         Uranium,
     }
 
-    public class ItemConstant<T>
+    public class ItemConstant
     {
-        public T Item { get; }
+        public Item Item { get; }
         public string DisplayName { get; }
-        public string TypeId { get; }
-        public string SubtypeId { get; }
+        public MyDefinitionId DefinitionId { get; }
+        public MyDefinitionId? RecipeDefId { get; }
 
-        public string DefinitionIdString
-        {
-            get
-            {
-                return $"{TypeId}/{SubtypeId}";
-            }
-        }
+        //public string DefinitionIdString
+        //{
+        //    get
+        //    {
+        //        return $"{TypeId}/{SubtypeId}";
+        //    }
+        //}
 
-        public MyDefinitionId MyDefinitionId
-        {
-            get
-            {
-                return MyDefinitionId.Parse(DefinitionIdString);
-            }
-        }
-
-        public ItemConstant(T item,
+        public ItemConstant(Item item,
                             string displayName,
-                            string typeId,
-                            string subtypeId)
+                            string definitionId,
+                            string recipeDefId)
         {
             Item = item;
             DisplayName = displayName;
-            TypeId = typeId;
-            SubtypeId = subtypeId;
-
+            DefinitionId = MyDefinitionId.Parse(definitionId);
+            if (recipeDefId != null)
+            {
+                RecipeDefId = MyDefinitionId.Parse(recipeDefId);
+            }
         }
     }
 
     public class DefinitionConstants
     {
+        private DefinitionConstants() { }
         private const string componentTypeId = "MyObjectBuilder_Component";
         private const string ingotTypeId = "MyObjectBuilder_Ingot";
 
-        public static Dictionary<Component, ItemConstant<Component>> components = new Dictionary<Component, ItemConstant<Component>> {
-            { Component.BulletproofGlass, new ItemConstant<Component>( Component.BulletproofGlass, "Bulletproof Glass", componentTypeId, "BulletproofGlass") },
-            { Component.Canvas, new ItemConstant<Component>( Component.Canvas, "Canvas", componentTypeId, "Canvas")},
-            { Component.Computer, new ItemConstant<Component>( Component.Computer, "Computer", componentTypeId, "Computer") },
-            { Component.ConstructionComp, new ItemConstant<Component>( Component.ConstructionComp, "Construction Comp.", componentTypeId, "Construction") },
-            { Component.DetectorComp, new ItemConstant<Component>( Component.DetectorComp, "Detector Comp.", componentTypeId, "Detector") },
-            { Component.Display, new ItemConstant<Component>( Component.Display, "Display", componentTypeId, "Display") },
-            { Component.EngineerPlushie, new ItemConstant<Component>( Component.EngineerPlushie, "Engineer Plushie", componentTypeId, "EngineerPlushie") },
-            { Component.Explosives, new ItemConstant<Component>( Component.Explosives, "Explosives", componentTypeId, "Explosives") },
-            { Component.Girder, new ItemConstant<Component>( Component.Girder, "Girder", componentTypeId, "Girder") },
-            { Component.GravityComp, new ItemConstant<Component>( Component.GravityComp, "Gravity Comp.", componentTypeId, "GravityGenerator") },
-            { Component.InteriorPlate, new ItemConstant<Component>( Component.InteriorPlate, "Interior Plate", componentTypeId, "InteriorPlate") },
-            { Component.LargeSteelTube, new ItemConstant<Component>( Component.LargeSteelTube, "Large Steel Tube", componentTypeId, "LargeTube") },
-            { Component.MedicalComp, new ItemConstant<Component>( Component.MedicalComp, "Medical Comp.", componentTypeId, "Medical") },
-            { Component.MetalGrid, new ItemConstant<Component>( Component.MetalGrid, "Metal Grid", componentTypeId, "MetalGrid") },
-            { Component.Motor, new ItemConstant<Component>( Component.Motor, "Motor", componentTypeId, "Motor") },
-            { Component.PowerCell, new ItemConstant<Component>( Component.PowerCell, "Power Cell", componentTypeId, "PowerCell") },
-            { Component.RadioCommComp, new ItemConstant<Component>( Component.RadioCommComp, "Radio - comm Comp.", componentTypeId, "RadioCommunication") },
-            { Component.ReactorComp, new ItemConstant<Component>( Component.ReactorComp, "Reactor Comp.", componentTypeId, "Reactor") },
-            { Component.SaberoidPlushie, new ItemConstant<Component>( Component.SaberoidPlushie, "Saberoid Plushie", componentTypeId, "SabiroidPlushie") },
-            { Component.SmallSteelTube, new ItemConstant<Component>( Component.SmallSteelTube, "Small Steel Tube", componentTypeId, "SmallTube") },
-            { Component.SolarCell, new ItemConstant<Component>( Component.SolarCell, "Solar Cell", componentTypeId, "SolarCell") },
-            { Component.SteelPlate, new ItemConstant<Component>( Component.SteelPlate, "Steel Plate", componentTypeId, "SteelPlate") },
-            { Component.Superconductor, new ItemConstant<Component>( Component.Superconductor, "Superconductor", componentTypeId, "Superconductor") },
-            { Component.ThrusterComp, new ItemConstant<Component>( Component.ThrusterComp, "Thruster Comp.", componentTypeId, "Thrust") },
-            { Component.ZoneChip, new ItemConstant<Component>( Component.ZoneChip, "Zone Chip", componentTypeId, "ZoneChip") },
-        };
+        public static Dictionary<Item, ItemConstant> Components = new Dictionary<Item, ItemConstant> {
+            { Item.BulletproofGlass,    new ItemConstant(Item.BulletproofGlass, "Bulletproof Glass", "MyObjectBuilder_Component/BulletproofGlass", "MyObjectBuilder_BlueprintDefinition/BulletproofGlass" ) },
+            { Item.Canvas,              new ItemConstant(Item.Canvas, "Canvas", "MyObjectBuilder_Component/Canvas", "MyObjectBuilder_BlueprintDefinition/Position0030_Canvas" )},
+            { Item.Computer,            new ItemConstant(Item.Computer, "Computer", "MyObjectBuilder_Component/Computer", "MyObjectBuilder_BlueprintDefinition/ComputerComponent" ) },
+            { Item.ConstructionComp,    new ItemConstant(Item.ConstructionComp, "Construction Comp.", "MyObjectBuilder_Component/Construction", "MyObjectBuilder_BlueprintDefinition/ConstructionComponent" ) },
+            { Item.DetectorComp,        new ItemConstant(Item.DetectorComp, "Detector Comp.", "MyObjectBuilder_Component/Detector", "MyObjectBuilder_BlueprintDefinition/DetectorComponent" ) },
+            { Item.Display,             new ItemConstant(Item.Display, "Display", "MyObjectBuilder_Component/Display", "MyObjectBuilder_BlueprintDefinition/Display" ) },
+            { Item.EngineerPlushie,     new ItemConstant(Item.EngineerPlushie, "Engineer Plushie", "MyObjectBuilder_Component/EngineerPlushie", null ) },
+            { Item.Explosives,          new ItemConstant(Item.Explosives, "Explosives", "MyObjectBuilder_Component/Explosives", "MyObjectBuilder_BlueprintDefinition/ExplosivesComponent" ) },
+            { Item.Girder,              new ItemConstant(Item.Girder, "Girder", "MyObjectBuilder_Component/Girder", "MyObjectBuilder_BlueprintDefinition/GirderComponent" ) },
+            { Item.GravityComp,         new ItemConstant(Item.GravityComp, "Gravity Comp.", "MyObjectBuilder_Component/GravityGenerator", "MyObjectBuilder_BlueprintDefinition/GravityGeneratorComponent" ) },
+            { Item.InteriorPlate,       new ItemConstant(Item.InteriorPlate, "Interior Plate", "MyObjectBuilder_Component/InteriorPlate", "MyObjectBuilder_BlueprintDefinition/InteriorPlate" ) },
+            { Item.LargeSteelTube,      new ItemConstant(Item.LargeSteelTube, "Large Steel Tube", "MyObjectBuilder_Component/LargeTube", "MyObjectBuilder_BlueprintDefinition/LargeTube" ) },
+            { Item.MedicalComp,         new ItemConstant(Item.MedicalComp, "Medical Comp.", "MyObjectBuilder_Component/Medical", "MyObjectBuilder_BlueprintDefinition/MedicalComponent" ) },
+            { Item.MetalGrid,           new ItemConstant(Item.MetalGrid, "Metal Grid", "MyObjectBuilder_Component/MetalGrid", "MyObjectBuilder_BlueprintDefinition/MetalGrid" ) },
+            { Item.Motor,               new ItemConstant(Item.Motor, "Motor", "MyObjectBuilder_Component/Motor", "MyObjectBuilder_BlueprintDefinition/MotorComponent" ) },
+            { Item.PowerCell,           new ItemConstant(Item.PowerCell, "Power Cell", "MyObjectBuilder_Component/PowerCell", "MyObjectBuilder_BlueprintDefinition/PowerCell" ) },
+            { Item.RadioCommComp,       new ItemConstant(Item.RadioCommComp, "Radio - comm Comp.", "MyObjectBuilder_Component/RadioCommunication", "MyObjectBuilder_BlueprintDefinition/RadioCommunicationComponent" ) },
+            { Item.ReactorComp,         new ItemConstant(Item.ReactorComp, "Reactor Comp.", "MyObjectBuilder_Component/Reactor", "MyObjectBuilder_BlueprintDefinition/ReactorComponent" ) },
+            { Item.SaberoidPlushie,     new ItemConstant(Item.SaberoidPlushie, "Saberoid Plushie", "MyObjectBuilder_Component/SabiroidPlushie", null ) },
+            { Item.SmallSteelTube,      new ItemConstant(Item.SmallSteelTube, "Small Steel Tube", "MyObjectBuilder_Component/SmallTube", "MyObjectBuilder_BlueprintDefinition/SmallTube" ) },
+            { Item.SolarCell,           new ItemConstant(Item.SolarCell, "Solar Cell", "MyObjectBuilder_Component/SolarCell", "MyObjectBuilder_BlueprintDefinition/SolarCell" ) },
+            { Item.SteelPlate,          new ItemConstant(Item.SteelPlate, "Steel Plate", "MyObjectBuilder_Component/SteelPlate", "MyObjectBuilder_BlueprintDefinition/SteelPlate" ) },
+            { Item.Superconductor,      new ItemConstant(Item.Superconductor, "Superconductor", "MyObjectBuilder_Component/Superconductor", "MyObjectBuilder_BlueprintDefinition/Superconductor" ) },
+            { Item.ThrusterComp,        new ItemConstant(Item.ThrusterComp, "Thruster Comp.", "MyObjectBuilder_Component/Thrust", "MyObjectBuilder_BlueprintDefinition/ThrustComponent" ) },
+            { Item.ZoneChip,            new ItemConstant(Item.ZoneChip, "Zone Chip", "MyObjectBuilder_Component/ZoneChip", "MyObjectBuilder_BlueprintDefinition/ZoneChip" ) },
 
-        public static Dictionary<Ingot, ItemConstant<Ingot>> ingots = new Dictionary<Ingot, ItemConstant<Ingot>> {
-            { Ingot.Cobalt, new ItemConstant<Ingot>(Ingot.Cobalt, "Cobalt", ingotTypeId, "Cobalt") },
-            { Ingot.Gold, new ItemConstant<Ingot>(Ingot.Gold, "Gold", ingotTypeId, "Gold") },
-            { Ingot.Ice, new ItemConstant<Ingot>(Ingot.Ice, "Ice", ingotTypeId, "Ice") },
-            { Ingot.Iron, new ItemConstant<Ingot>(Ingot.Iron, "Iron", ingotTypeId, "Iron") },
-            { Ingot.Magnesium, new ItemConstant<Ingot>(Ingot.Magnesium, "Magnesium", ingotTypeId, "Magnesium") },
-            { Ingot.Nickel, new ItemConstant<Ingot>(Ingot.Nickel, "Nickel", ingotTypeId, "Nickel") },
-            { Ingot.Organic, new ItemConstant<Ingot>(Ingot.Organic, "Organic", ingotTypeId, "Organic") },
-            { Ingot.Platinum, new ItemConstant<Ingot>(Ingot.Platinum, "Platinum", ingotTypeId, "Platinum") },
-            { Ingot.Scrap, new ItemConstant<Ingot>(Ingot.Scrap, "Scrap", ingotTypeId, "Scrap") },
-            { Ingot.Silicon, new ItemConstant<Ingot>(Ingot.Silicon, "Silicon", ingotTypeId, "Silicon") },
-            { Ingot.Silver, new ItemConstant<Ingot>(Ingot.Silver, "Silver", ingotTypeId, "Silver") },
-            { Ingot.Stone, new ItemConstant<Ingot>(Ingot.Stone, "Stone", ingotTypeId, "Stone") },
-            { Ingot.Uranium, new ItemConstant<Ingot>(Ingot.Uranium, "Uranium", ingotTypeId, "Uranium") },
+            { Item.Cobalt, new ItemConstant(Item.Cobalt, "Cobalt", "MyObjectBuilder_Ingot/Cobalt", "MyObjectBuilder_BlueprintDefinition/CobaltOreToIngot") },
+            { Item.Gold, new ItemConstant(Item.Gold, "Gold", "MyObjectBuilder_Ingot/Gold", "MyObjectBuilder_BlueprintDefinition/GoldOreToIngot") },
+            { Item.Ice, new ItemConstant(Item.Ice, "Ice", "MyObjectBuilder_Ingot/Ice", null) },
+            { Item.Iron, new ItemConstant(Item.Iron, "Iron", "MyObjectBuilder_Ingot/Iron", "MyObjectBuilder_BlueprintDefinition/IronOreToIngot") },
+            { Item.Magnesium, new ItemConstant(Item.Magnesium, "Magnesium", "MyObjectBuilder_Ingot/Magnesium", "MyObjectBuilder_BlueprintDefinition/MagnesiumOreToIngot") },
+            { Item.Nickel, new ItemConstant(Item.Nickel, "Nickel", "MyObjectBuilder_Ingot/Nickel", "MyObjectBuilder_BlueprintDefinition/NickelOreToIngot") },
+            //{ Item.Organic, new ItemConstant(Item.Organic, "Organic", "MyObjectBuilder_Ingot/Organic", null) },
+            { Item.Platinum, new ItemConstant(Item.Platinum, "Platinum", "MyObjectBuilder_Ingot/Platinum", "MyObjectBuilder_BlueprintDefinition/PlatinumOreToIngot") },
+            { Item.Scrap, new ItemConstant(Item.Scrap, "Scrap", "MyObjectBuilder_Ingot/Scrap", "MyObjectBuilder_BlueprintDefinition/ScrapOreToIngot") },
+            { Item.Silicon, new ItemConstant(Item.Silicon, "Silicon", "MyObjectBuilder_Ingot/Silicon", "MyObjectBuilder_BlueprintDefinition/SiliconOreToIngot") },
+            { Item.Silver, new ItemConstant(Item.Silver, "Silver", "MyObjectBuilder_Ingot/Silver", "MyObjectBuilder_BlueprintDefinition/SilverOreToIngot") },
+            //{ Item.Stone, new ItemConstant(Item.Stone, "Stone", "MyObjectBuilder_Ingot/Stone", "MyObjectBuilder_BlueprintDefinition/StoneOreToIngot") },
+            { Item.Uranium, new ItemConstant(Item.Uranium, "Uranium", "MyObjectBuilder_Ingot/Uranium", "MyObjectBuilder_BlueprintDefinition/UraniumOreToIngot") },
         };
     }
 }

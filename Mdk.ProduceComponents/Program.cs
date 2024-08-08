@@ -1,24 +1,26 @@
 ﻿using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using VRage;
+using VRage.Game.ModAPI.Ingame;
 
 namespace IngameScript
 {
+    class MyClass
+    {
+
+    }
     partial class Program : MyGridProgram
     {
-        public IMyTextSurface MainScreen { get; private set; }
-        public List<Item> RelevantComponents { get; private set; }
+        private readonly IMyTextSurface MainScreen;
+        private readonly List<Item> RelevantComponents;
+        private readonly BlockProvider BlockProvider;
 
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
             MainScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
-
             RelevantComponents = new List<Item>
             {
                 Item.BulletproofGlass,
@@ -34,35 +36,16 @@ namespace IngameScript
                 Item.SmallSteelTube,
                 Item.SteelPlate,
             };
-        }
-
-        public void Save()
-        {
+            BlockProvider = new BlockProvider(GridTerminalSystem, Me);
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            MainScreen.WriteText("");
+            MainScreen.Clear();
+            List<IMyInventory> inventories;
+            BlockProvider.GetAllInventories(out inventories);
 
-            List<IMyTerminalBlock> blocks = new List<IMyTerminalBlock>();
-            GridTerminalSystem.GetBlocks(blocks);
-
-            var blocksWithInventories = blocks
-                .Where(block => block.CubeGrid == Me.CubeGrid)
-                .Where(block => block.HasInventory)
-                .ToList();
-
-            var outputInventories = blocksWithInventories
-                .Where(block => block is IMyProductionBlock)
-                .Cast<IMyProductionBlock>()
-                .Select(block => block.OutputInventory)
-                .ToList();
-
-            var allInventories = blocksWithInventories
-                .Select(block => block.GetInventory())
-                .Concat(outputInventories).ToList();
-
-            var countProvider = new InventoryManager(allInventories);
+            var countProvider = new InventoryManager(inventories);
 
             var assemblers = new List<IMyAssembler>();
             GridTerminalSystem.GetBlocksOfType(assemblers);
@@ -103,7 +86,7 @@ namespace IngameScript
                     assemblerManager.EnqueueRecipeFor(relevantComponent, needed);
                 }
 
-                MainScreen.WriteText($"{DefinitionConstants.Components[relevantComponent].DisplayName}: {quantity} ({scheduledCount})\n", true);
+                MainScreen.WriteLine($"{DefinitionConstants.Components[relevantComponent].DisplayName}: {quantity} ({scheduledCount})");
             }
         }
     }

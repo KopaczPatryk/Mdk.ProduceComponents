@@ -8,8 +8,8 @@ namespace IngameScript
 {
     public class AssemblerGroupManager
     {
-        private IMyAssembler masterAssembler;
-        private List<IMyAssembler> others;
+        private readonly IMyAssembler masterAssembler;
+        private readonly List<IMyAssembler> others;
 
         public AssemblerGroupManager(IMyAssembler masterAssembler, List<IMyAssembler> others)
         {
@@ -41,8 +41,6 @@ namespace IngameScript
                 queue.AddRange(localQueue);
             });
 
-            //logger(queue.Count.ToString());
-
             return queue
                 .GroupBy(element => element.BlueprintId)
                 .ToDictionary(
@@ -53,24 +51,16 @@ namespace IngameScript
                     e => DefinitionConstants.Components.Values.Where(c => c.RecipeDefId == e.Key).Single().Item,
                     e => e.Value.Aggregate((a, b) => a + b)
                 );
-
-            //logger(grouped.First().Key.ToString());
-
-            //var summed = grouped.ToDictionary(
-            //    e => e.Key,
-            //    e => e.Value.Aggregate((a, b) => a + b)
-            //);
-            //return summed.ToDictionary(e =>
-            //    DefinitionConstants.Components.Values.Where(c => c.RecipeDefId == e.Key).Single().Item,
-            //    e => MyFixedPoint.Zero//e.Value
-            //);
         }
 
         public void EnqueueRecipeFor(Item item, MyFixedPoint amount)
         {
             var recipeDef = DefinitionConstants.Components[item].RecipeDefId;
-            if (recipeDef.HasValue)
+
+
+            if (recipeDef.HasValue && amount > 0 && masterAssembler.Mode == MyAssemblerMode.Assembly)
             {
+
                 masterAssembler.AddQueueItem(recipeDef.Value, amount);
             }
         }

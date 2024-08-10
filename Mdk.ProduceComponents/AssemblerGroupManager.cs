@@ -57,10 +57,8 @@ namespace IngameScript
         {
             var recipeDef = DefinitionConstants.Components[item].RecipeDefId;
 
-
             if (recipeDef.HasValue && amount > 0 && masterAssembler.Mode == MyAssemblerMode.Assembly)
             {
-
                 masterAssembler.AddQueueItem(recipeDef.Value, amount);
             }
         }

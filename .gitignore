@@ -10,3 +10,5 @@ bld/
 [Ll]og/
 
 .vs
+Mdk.ProduceComponents/obj
+Mdk.ProduceComponents/bin

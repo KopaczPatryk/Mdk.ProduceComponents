@@ -22,5 +22,13 @@ namespace IngameScript {
                 .Select(block => block.GetInventory())
                 .Concat(outputInventories).ToList();
         }
+        public static void GetAllAssemblers(
+            IList<IMyTerminalBlock> lookAmong,
+            out IList<IMyAssembler> assemblers
+        ) {
+            assemblers = lookAmong
+                .Where(block => block is IMyAssembler)
+                .Cast<IMyAssembler>().ToList();
+        }
     }
 }

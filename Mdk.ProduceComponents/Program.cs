@@ -35,8 +35,8 @@ namespace IngameScript {
 
         public Program() {
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
-
             MainScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
+
 
             var blocks = new List<IMyTerminalBlock>();
             GridTerminalSystem.GetBlocks(blocks);
@@ -64,12 +64,12 @@ namespace IngameScript {
                     .Where(assembler => assembler.CustomName != masterAssemblerName)
                     .ToList();
 
-                AssemblerGroupManager.EnsureHierarchy(masterAssembler, nonMasterAssemblers);
-                BlockProvider.GetAllInventories(BlocksOnThisGrid, out Inventories);
+                AssemblerManager.EnsureHierarchy(masterAssembler, nonMasterAssemblers);
+                BlockManager.GetAllInventories(BlocksOnThisGrid, out Inventories);
 
                 foreach(var relevantComponent in RelevantComponents) {
                     var quantity = InventoryManager.GetAvailableCount(ref Inventories, relevantComponent.Key);
-                    var tasks = AssemblerGroupManager.GetPendingTasks(assemblers, Echo);
+                    var tasks = AssemblerManager.GetPendingTasks(assemblers, Echo);
 
                     MyFixedPoint scheduledCount = 0;
                     if(tasks.ContainsKey(relevantComponent.Key)) {
@@ -79,7 +79,7 @@ namespace IngameScript {
                     MyFixedPoint needed = relevantComponent.Value - (quantity + scheduledCount);
 
                     if(needed > 0) {
-                        AssemblerGroupManager.EnqueueRecipeFor(masterAssembler, relevantComponent.Key, needed);
+                        AssemblerManager.EnqueueRecipeFor(masterAssembler, relevantComponent.Key, needed);
                     }
 
                     MainScreen.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} ({scheduledCount})");

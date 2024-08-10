@@ -4,8 +4,7 @@ using System.Linq;
 using VRage.Game.ModAPI.Ingame;
 
 namespace IngameScript {
-    // todo rename to BlockDiscovery
-    class BlockProvider {
+    class BlockManager {
         public static void GetAllInventories(
             IList<IMyTerminalBlock> lookAmong,
             out IList<IMyInventory> inventories

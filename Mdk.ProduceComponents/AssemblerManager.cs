@@ -5,8 +5,7 @@ using System.Linq;
 using VRage;
 
 namespace IngameScript {
-    // todo rename AssemblerManager
-    public class AssemblerGroupManager {
+    public class AssemblerManager {
         public static void EnsureHierarchy(IMyAssembler master, IList<IMyAssembler> otherAssemblers) {
             master.CooperativeMode = false;
             foreach(var assembler in otherAssemblers) {

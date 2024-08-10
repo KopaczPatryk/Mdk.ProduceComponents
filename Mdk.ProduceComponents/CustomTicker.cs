@@ -24,7 +24,7 @@ namespace IngameScript {
                 if(currentTick % 100 == 0) Every100?.Invoke();
                 if(currentTick % 1000 == 0) Every1000?.Invoke();
                 if(currentTick % TicksInSecond == 0) EverySeconds?.Invoke();
-                if(currentTick % TicksInSecond * 5 == 0) Every5Seconds?.Invoke();
+                if(currentTick % (TicksInSecond * 5) == 0) Every5Seconds?.Invoke();
             }
 
             currentTick++;

@@ -4,42 +4,26 @@ using System.Collections.Generic;
 using System.Linq;
 using VRage;
 
-namespace IngameScript
-{
-    public class AssemblerGroupManager
-    {
-        private readonly IMyAssembler masterAssembler;
-        private readonly List<IMyAssembler> others;
-
-        public AssemblerGroupManager(IMyAssembler masterAssembler, List<IMyAssembler> others)
-        {
-            this.masterAssembler = masterAssembler;
-            this.others = others ?? new List<IMyAssembler>();
-        }
-        public void EnsureHierarchy()
-        {
-            masterAssembler.CooperativeMode = false;
-            others.ForEach(
-                assembler => assembler.CooperativeMode = true
-            );
+namespace IngameScript {
+    // todo rename AssemblerManager
+    public class AssemblerGroupManager {
+        public static void EnsureHierarchy(IMyAssembler master, IList<IMyAssembler> otherAssemblers) {
+            master.CooperativeMode = false;
+            foreach(var assembler in otherAssemblers) {
+                assembler.CooperativeMode = true;
+            }
         }
 
-        public Dictionary<Item, MyFixedPoint> PendingTasks(Action<string> logger)
-        {
-            var allAssemblers = new List<IMyAssembler>
-            {
-                masterAssembler
-            };
-            allAssemblers.AddRange(others);
-
+        public static Dictionary<Item, MyFixedPoint> GetPendingTasks(
+            IList<IMyAssembler> assemblers,
+            Action<string> logger = null
+        ) {
             var queue = new List<MyProductionItem>();
-
-            allAssemblers.ForEach(assembler =>
-            {
+            foreach(var assembler in assemblers) {
                 var localQueue = new List<MyProductionItem>();
                 assembler.GetQueue(localQueue);
                 queue.AddRange(localQueue);
-            });
+            }
 
             return queue
                 .GroupBy(element => element.BlueprintId)
@@ -53,12 +37,10 @@ namespace IngameScript
                 );
         }
 
-        public void EnqueueRecipeFor(Item item, MyFixedPoint amount)
-        {
+        public static void EnqueueRecipeFor(IMyAssembler masterAssembler, Item item, MyFixedPoint amount) {
             var recipeDef = DefinitionConstants.Components[item].RecipeDefId;
 
-            if (recipeDef.HasValue && amount > 0 && masterAssembler.Mode == MyAssemblerMode.Assembly)
-            {
+            if(recipeDef.HasValue && amount > 0 && masterAssembler.Mode == MyAssemblerMode.Assembly) {
                 masterAssembler.AddQueueItem(recipeDef.Value, amount);
             }
         }

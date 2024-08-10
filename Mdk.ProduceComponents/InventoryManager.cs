@@ -3,19 +3,9 @@ using System.Linq;
 using VRage;
 using VRage.Game.ModAPI.Ingame;
 
-namespace IngameScript
-{
-    public class InventoryManager
-    {
-        private readonly IList<IMyInventory> inventories;
-
-        public InventoryManager(IList<IMyInventory> inventories)
-        {
-            this.inventories = inventories;
-        }
-
-        public MyFixedPoint GetAvailableCount(Item item)
-        {
+namespace IngameScript {
+    public static class InventoryManager {
+        public static MyFixedPoint GetAvailableCount(ref IList<IMyInventory> inventories, Item item) {
             var def = DefinitionConstants.Components[item].DefinitionId;
 
             var count = inventories

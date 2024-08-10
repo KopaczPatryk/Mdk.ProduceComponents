@@ -1,93 +1,95 @@
-﻿using Sandbox.ModAPI.Ingame;
+﻿using Sandbox.Game.GameSystems;
+using Sandbox.ModAPI.Ingame;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VRage;
 using VRage.Game.ModAPI.Ingame;
 
-namespace IngameScript
-{
-    class MyClass
-    {
+namespace IngameScript {
+    //ref - may 
+    //in - cannot 
+    //out - must 
 
-    }
-    partial class Program : MyGridProgram
-    {
+    partial class Program : MyGridProgram {
+        private readonly CustomTicker Ticker;
         private readonly IMyTextSurface MainScreen;
-        private readonly List<Item> RelevantComponents;
-        private readonly BlockProvider BlockProvider;
 
-        public Program()
-        {
-            Runtime.UpdateFrequency = UpdateFrequency.Update100;
+        private readonly Dictionary<Item, int> RelevantComponents = new Dictionary<Item, int>{
+                {Item.BulletproofGlass, 200},
+                {Item.Computer, 200 },
+                {Item.ConstructionComp, 200},
+                {Item.Display, 200},
+                {Item.Girder, 200},
+                {Item.InteriorPlate, 200},
+                {Item.LargeSteelTube, 200},
+                {Item.MetalGrid, 200},
+                {Item.Motor, 200},
+                {Item.PowerCell, 200},
+                {Item.SmallSteelTube, 200},
+                {Item.SteelPlate, 500},
+            };
+
+        private IList<IMyInventory> Inventories;
+        private IList<IMyTerminalBlock> BlocksOnThisGrid;
+
+        public Program() {
+            Runtime.UpdateFrequency = UpdateFrequency.Update1;
 
             MainScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
-            RelevantComponents = new List<Item>
-            {
-                Item.BulletproofGlass,
-                Item.Computer,
-                Item.ConstructionComp,
-                Item.Display,
-                Item.Girder,
-                Item.InteriorPlate,
-                Item.LargeSteelTube,
-                Item.MetalGrid,
-                Item.Motor,
-                Item.PowerCell,
-                Item.SmallSteelTube,
-                Item.SteelPlate,
-            };
-            BlockProvider = new BlockProvider(GridTerminalSystem, Me);
-        }
 
-        public void Main(string argument, UpdateType updateSource)
-        {
-            MainScreen.Clear();
-            List<IMyInventory> inventories;
-            BlockProvider.GetAllInventories(out inventories);
+            var blocks = new List<IMyTerminalBlock>();
+            GridTerminalSystem.GetBlocks(blocks);
 
-            var countProvider = new InventoryManager(inventories);
-
-            var assemblers = new List<IMyAssembler>();
-            GridTerminalSystem.GetBlocksOfType(assemblers);
-            assemblers.RemoveAll(block => block.CubeGrid != Me.CubeGrid);
-
-            string masterAssemblerName = "masterAssembler";
-
-            var masterAssembler = assemblers
-                .Where(assembler => assembler.CustomName == masterAssemblerName)
-                .First();
-
-            var nonMasterAssemblers = assemblers
-                .Where(assembler => assembler.CustomName != masterAssemblerName)
+            BlocksOnThisGrid = blocks
+                .Where(block => block.CubeGrid == Me.CubeGrid)
                 .ToList();
 
-            var assemblerManager = new AssemblerGroupManager(masterAssembler, nonMasterAssemblers);
-            assemblerManager.EnsureHierarchy();
+            Ticker = new CustomTicker();
 
-            foreach (var relevantComponent in RelevantComponents)
-            {
-                var quantity = countProvider.GetAvailableCount(relevantComponent);
-                var tasks = assemblerManager.PendingTasks(Echo);
-                MyFixedPoint scheduledCount;
+            Action every5Seconds = () => {
+                MainScreen.Clear();
 
-                if (tasks.ContainsKey(relevantComponent))
-                {
-                    scheduledCount = tasks[relevantComponent];
+                List<IMyAssembler> assemblers = new List<IMyAssembler>();
+                GridTerminalSystem.GetBlocksOfType(assemblers);
+                assemblers.RemoveAll(block => block.CubeGrid != Me.CubeGrid);
+
+                string masterAssemblerName = "masterAssembler";
+
+                IMyAssembler masterAssembler = assemblers
+                    .Where(assembler => assembler.CustomName == masterAssemblerName)
+                    .First();
+
+                IList<IMyAssembler> nonMasterAssemblers = assemblers
+                    .Where(assembler => assembler.CustomName != masterAssemblerName)
+                    .ToList();
+
+                AssemblerGroupManager.EnsureHierarchy(masterAssembler, nonMasterAssemblers);
+                BlockProvider.GetAllInventories(BlocksOnThisGrid, out Inventories);
+
+                foreach(var relevantComponent in RelevantComponents) {
+                    var quantity = InventoryManager.GetAvailableCount(ref Inventories, relevantComponent.Key);
+                    var tasks = AssemblerGroupManager.GetPendingTasks(assemblers, Echo);
+
+                    MyFixedPoint scheduledCount = 0;
+                    if(tasks.ContainsKey(relevantComponent.Key)) {
+                        scheduledCount = tasks[relevantComponent.Key];
+                    }
+
+                    MyFixedPoint needed = relevantComponent.Value - (quantity + scheduledCount);
+
+                    if(needed > 0) {
+                        AssemblerGroupManager.EnqueueRecipeFor(masterAssembler, relevantComponent.Key, needed);
+                    }
+
+                    MainScreen.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} ({scheduledCount})");
                 }
-                else
-                {
-                    scheduledCount = 0;
-                }
+            };
+            Ticker.Every5Seconds += every5Seconds;
+        }
 
-                MyFixedPoint needed = 200 - (quantity + scheduledCount);
-
-                if (needed > 0)
-                {
-                    assemblerManager.EnqueueRecipeFor(relevantComponent, needed);
-                }
-
-                MainScreen.WriteLine($"{DefinitionConstants.Components[relevantComponent].DisplayName}: {quantity} ({scheduledCount})");
-            }
+        public void Main(string argument, UpdateType updateSource) {
+            Ticker.Tick();
         }
     }
 }

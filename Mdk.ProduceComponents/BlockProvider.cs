@@ -3,28 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using VRage.Game.ModAPI.Ingame;
 
-namespace IngameScript
-{
-    internal class BlockProvider
-    {
-        private readonly IMyGridTerminalSystem gridTerminalSystem;
-        private readonly IMyProgrammableBlock me;
+namespace IngameScript {
+    // todo rename to BlockDiscovery
+    class BlockProvider {
+        public static void GetAllInventories(
+            IList<IMyTerminalBlock> lookAmong,
+            out IList<IMyInventory> inventories
+        ) {
 
-        public BlockProvider(IMyGridTerminalSystem gridTerminalSystem, IMyProgrammableBlock me)
-        {
-            this.gridTerminalSystem = gridTerminalSystem;
-            this.me = me;
-        }
-
-        public void GetAllInventories(out List<IMyInventory> inventories, bool connected = false)
-        {
-            var blocks = new List<IMyTerminalBlock>();
-            gridTerminalSystem.GetBlocks(blocks);
-
-            var blocksOnThisGrid = blocks
-                .Where(block => block.CubeGrid == me.CubeGrid);
-
-            var blocksWithInventories = blocksOnThisGrid
+            var blocksWithInventories = lookAmong
                 .Where(block => block.HasInventory);
 
             var outputInventories = blocksWithInventories

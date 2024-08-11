@@ -14,6 +14,7 @@ namespace IngameScript {
         public event Action Every1000;
         public event Action EverySeconds;
         public event Action Every5Seconds;
+        public event Action Every30Seconds;
         public event Action EveryMinute;
 
         private int currentTick = 0;
@@ -26,6 +27,7 @@ namespace IngameScript {
             if(currentTick % 1000 == 0) Every1000?.Invoke();
             if(currentTick % TicksInSecond == 0) EverySeconds?.Invoke();
             if(currentTick % (TicksInSecond * 5) == 0) Every5Seconds?.Invoke();
+            if(currentTick % (TicksInSecond * 30) == 0) Every30Seconds?.Invoke();
             if(currentTick % (TicksInSecond * 60) == 0) EveryMinute?.Invoke();
 
             currentTick++;

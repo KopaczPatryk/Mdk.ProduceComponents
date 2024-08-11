@@ -25,7 +25,7 @@ namespace IngameScript {
 
             string masterAssemblerName = "masterAssembler";
 
-            Action every5Seconds = () => {
+            Action requestCrafting = () => {
                 IMyTextSurface componentPoolScreen = GridTerminalSystem.GetBlockWithName("pScreen") as IMyTextSurface;
 
                 var blocks = new List<IMyTerminalBlock>();
@@ -67,7 +67,7 @@ namespace IngameScript {
                 );
             };
 
-            Action everyMinute = () => {
+            Action unclogAssemblersAndRefineries = () => {
                 var targetCargo = BlocksOnThisGrid
                     .Where(block => block.CustomName == "Cargo Comp")
                     .First()
@@ -78,6 +78,11 @@ namespace IngameScript {
                     BlockManager.GetAllAssemblers(
                         lookAmong: BlocksOnThisGrid,
                         assemblers: out assemblers);
+
+                    IList<IMyRefinery> refineries;
+                    BlockManager.GetAllRefineries(
+                        lookAmong: BlocksOnThisGrid,
+                        refineries: out refineries);
 
                     foreach(var assembler in assemblers) {
                         var inputs = assembler.InputInventory;
@@ -103,11 +108,24 @@ namespace IngameScript {
                             }
                         }
                     }
+                    
+                    foreach(var refinery in refineries) {
+                        var outputs = refinery.OutputInventory;
+
+                        List<MyInventoryItem> items = new List<MyInventoryItem>();
+                        outputs.GetItems(items);
+
+                        foreach(var item in items) {
+                            if(outputs.CanTransferItemTo(targetCargo, item.Type)) {
+                                outputs.TransferItemTo(targetCargo, item);
+                            }
+                        }
+                    }
                 }
             };
 
-            Ticker.Every5Seconds += every5Seconds;
-            Ticker.EveryMinute += everyMinute;
+            Ticker.Every5Seconds += requestCrafting;
+            Ticker.Every30Seconds += unclogAssemblersAndRefineries;
         }
 
         public void Main(string argument, UpdateType updateSource) {

@@ -1,4 +1,5 @@
 ﻿using Sandbox.ModAPI.Ingame;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using VRage.Game.ModAPI.Ingame;
@@ -29,6 +30,12 @@ namespace IngameScript {
             assemblers = lookAmong
                 .Where(block => block is IMyAssembler)
                 .Cast<IMyAssembler>().ToList();
+        }
+
+        internal static void GetAllRefineries(IList<IMyTerminalBlock> lookAmong, out IList<IMyRefinery> refineries) {
+            refineries = lookAmong
+                .Where(block => block is IMyRefinery)
+                .Cast<IMyRefinery>().ToList();
         }
     }
 }

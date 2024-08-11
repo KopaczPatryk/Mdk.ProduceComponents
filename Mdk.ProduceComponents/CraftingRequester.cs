@@ -32,7 +32,7 @@ namespace IngameScript {
                     AssemblerManager.EnqueueRecipeFor(masterAssembler, relevantComponent.Key, needed);
                 }
 
-                outputScreen?.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} ({scheduledCount})");
+                outputScreen?.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} +{scheduledCount} ({relevantComponent.Value})");
             }
         }
     }

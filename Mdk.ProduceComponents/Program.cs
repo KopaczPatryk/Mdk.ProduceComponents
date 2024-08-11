@@ -86,9 +86,20 @@ namespace IngameScript {
                         inputs.GetItems(items);
 
                         foreach(var item in items) {
-                            if(inputs.CanTransferItemTo(targetCargo, item.Type)) {
-                                Echo("trans");
+                            if(inputs.CanTransferItemTo(targetCargo, item.Type))
                                 inputs.TransferItemTo(targetCargo, item);
+                        }
+                    }
+
+                    foreach(var assembler in assemblers) {
+                        var outputs = assembler.OutputInventory;
+
+                        List<MyInventoryItem> items = new List<MyInventoryItem>();
+                        outputs.GetItems(items);
+
+                        foreach(var item in items) {
+                            if(outputs.CanTransferItemTo(targetCargo, item.Type)) {
+                                outputs.TransferItemTo(targetCargo, item);
                             }
                         }
                     }

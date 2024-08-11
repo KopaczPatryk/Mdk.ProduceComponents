@@ -15,7 +15,7 @@ namespace IngameScript {
                                   IList<IMyInventory> inventories,
                                   IMyTextSurface outputScreen,
                                   Dictionary<Item, int> requestedComponents) {
-            outputScreen.Clear();
+            outputScreen?.Clear();
 
             foreach(var relevantComponent in requestedComponents) {
                 var quantity = InventoryManager.GetAvailableCount(ref inventories, relevantComponent.Key);
@@ -32,7 +32,7 @@ namespace IngameScript {
                     AssemblerManager.EnqueueRecipeFor(masterAssembler, relevantComponent.Key, needed);
                 }
 
-                outputScreen.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} ({scheduledCount})");
+                outputScreen?.WriteLine($"{DefinitionConstants.Components[relevantComponent.Key].DisplayName}: {quantity} ({scheduledCount})");
             }
         }
     }

@@ -1,10 +1,7 @@
-﻿using Sandbox.Game.GameSystems;
-using Sandbox.ModAPI.Ingame;
+﻿using Sandbox.ModAPI.Ingame;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
-using VRage;
 using VRage.Game.ModAPI.Ingame;
 
 namespace IngameScript {
@@ -36,11 +33,12 @@ namespace IngameScript {
                     .ToList();
 
                 IList<IMyAssembler> assemblers = new List<IMyAssembler>();
-                BlockManager.GetAllAssemblers(lookAmong: BlocksOnThisGrid, assemblers: out assemblers);
+                BlockManager.GetAllAssemblers(
+                    lookAmong: BlocksOnThisGrid,
+                    assemblers: out assemblers);
 
                 IMyAssembler masterAssembler = assemblers
-                    .Where(assembler => assembler.CustomName == masterAssemblerName)
-                    .First();
+                    .First(assembler => assembler.CustomName == masterAssemblerName);
 
                 //AssemblerManager.EnsureHierarchy(masterAssembler, assemblers);
                 BlockManager.GetAllInventories(BlocksOnThisGrid, out Inventories);
@@ -85,41 +83,12 @@ namespace IngameScript {
                         refineries: out refineries);
 
                     foreach(var assembler in assemblers) {
-                        var inputs = assembler.InputInventory;
-
-                        List<MyInventoryItem> items = new List<MyInventoryItem>();
-                        inputs.GetItems(items);
-
-                        foreach(var item in items) {
-                            if(inputs.CanTransferItemTo(targetCargo, item.Type))
-                                inputs.TransferItemTo(targetCargo, item);
-                        }
+                        assembler.InputInventory.TransferAllTo(targetCargo);
+                        assembler.OutputInventory.TransferAllTo(targetCargo);
                     }
 
-                    foreach(var assembler in assemblers) {
-                        var outputs = assembler.OutputInventory;
-
-                        List<MyInventoryItem> items = new List<MyInventoryItem>();
-                        outputs.GetItems(items);
-
-                        foreach(var item in items) {
-                            if(outputs.CanTransferItemTo(targetCargo, item.Type)) {
-                                outputs.TransferItemTo(targetCargo, item);
-                            }
-                        }
-                    }
-                    
                     foreach(var refinery in refineries) {
-                        var outputs = refinery.OutputInventory;
-
-                        List<MyInventoryItem> items = new List<MyInventoryItem>();
-                        outputs.GetItems(items);
-
-                        foreach(var item in items) {
-                            if(outputs.CanTransferItemTo(targetCargo, item.Type)) {
-                                outputs.TransferItemTo(targetCargo, item);
-                            }
-                        }
+                        refinery.OutputInventory.TransferAllTo(targetCargo);
                     }
                 }
             };
@@ -128,8 +97,10 @@ namespace IngameScript {
             Ticker.Every30Seconds += unclogAssemblersAndRefineries;
         }
 
+        #pragma warning disable IDE0060 // Remove unused parameter
         public void Main(string argument, UpdateType updateSource) {
             Ticker?.Tick();
         }
+        #pragma warning restore IDE0060 // Remove unused parameter
     }
 }

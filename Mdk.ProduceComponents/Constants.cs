@@ -87,7 +87,7 @@ namespace IngameScript {
 
         public static Dictionary<Item, ItemConstant> Components = new Dictionary<Item, ItemConstant> {
             { Item.BulletproofGlass,    new ItemConstant(Item.BulletproofGlass, "Bulletproof Glass", "MyObjectBuilder_Component/BulletproofGlass", "MyObjectBuilder_BlueprintDefinition/BulletproofGlass", itemType:ItemType.Component ) },
-            { Item.Canvas,              new ItemConstant(Item.Canvas, "Canvas", "MyObjectBuilder_Component/Canvas", "MyObjectBuilder_BlueprintDefinition/Position0030_Canvas, itemType:ItemType.Component", itemType: ItemType.Component )},
+            { Item.Canvas,              new ItemConstant(Item.Canvas, "Canvas", "MyObjectBuilder_Component/Canvas", "MyObjectBuilder_BlueprintDefinition/Position0030_Canvas", itemType: ItemType.Component )},
             { Item.Computer,            new ItemConstant(Item.Computer, "Computer", "MyObjectBuilder_Component/Computer", "MyObjectBuilder_BlueprintDefinition/ComputerComponent", itemType:ItemType.Component ) },
             { Item.ConstructionComp,    new ItemConstant(Item.ConstructionComp, "Construction Comp.", "MyObjectBuilder_Component/Construction", "MyObjectBuilder_BlueprintDefinition/ConstructionComponent", itemType:ItemType.Component ) },
             { Item.DetectorComp,        new ItemConstant(Item.DetectorComp, "Detector Comp.", "MyObjectBuilder_Component/Detector", "MyObjectBuilder_BlueprintDefinition/DetectorComponent", itemType:ItemType.Component ) },

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace IngameScript {
     class CustomTicker {
         private const int TicksInSecond = 60;
-        // TODO onstart
+
         public event Action Every10;
         public event Action Every100;
         public event Action Every1000;

@@ -49,18 +49,18 @@ namespace IngameScript {
                     outputScreen: componentPoolScreen,
                     inventories: Inventories,
                     requestedComponents: new Dictionary<Item, int>{
-                        {Item.BulletproofGlass, 300},
-                        {Item.Computer, 300 },
-                        {Item.ConstructionComp, 300},
-                        {Item.Display, 300},
-                        {Item.Girder, 300},
-                        {Item.InteriorPlate, 300},
-                        {Item.LargeSteelTube, 300},
-                        {Item.MetalGrid, 300},
-                        {Item.Motor, 300},
-                        {Item.PowerCell, 200},
-                        {Item.SmallSteelTube, 300},
-                        {Item.SteelPlate, 1500},
+                        {Item.BulletproofGlass, 1000},
+                        {Item.Computer, 2000 },
+                        {Item.ConstructionComp, 4000},
+                        {Item.Display, 1000},
+                        {Item.Girder, 2000},
+                        {Item.InteriorPlate, 4000},
+                        {Item.LargeSteelTube, 1500},
+                        {Item.MetalGrid, 1000},
+                        {Item.Motor, 3000},
+                        {Item.PowerCell, 1000},
+                        {Item.SmallSteelTube, 3000},
+                        {Item.SteelPlate, 3000},
                     }
                 );
             };
@@ -97,10 +97,8 @@ namespace IngameScript {
             Ticker.Every30Seconds += unclogAssemblersAndRefineries;
         }
 
-        #pragma warning disable IDE0060 // Remove unused parameter
         public void Main(string argument, UpdateType updateSource) {
             Ticker?.Tick();
         }
-        #pragma warning restore IDE0060 // Remove unused parameter
     }
 }

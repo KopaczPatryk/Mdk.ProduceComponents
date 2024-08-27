@@ -8,6 +8,7 @@ namespace IngameScript {
         Ice,
         Component,
         Ingot,
+        Ammo,
     }
     public enum Item {
         // Comps
@@ -50,6 +51,29 @@ namespace IngameScript {
         Silver,
         Stone,
         Uranium,
+        //Ammo
+        NatoMagazine556x45mm,
+        ArtilleryShell,
+        AssaultCannonShell,
+        AutocannonMagazine,
+        FireworksBlue,
+        FireworksGreen,
+        FireworksPink,
+        FireworksRainbow,
+        FireworksRed,
+        FireworksYellow,
+        FlareGunClip,
+        GatlingAmmoBox,
+        LargeRailgunSabot,
+        MR20RifleMagazine,
+        MR30ERifleMagazine,
+        MR50ARifleMagazine,
+        MR8PRifleMagazine,
+        Rocket,
+        S10PistolMagazine,
+        S10EPistolMagazine,
+        S20APistolMagazine,
+        SmallRailgunSabot,
     }
 
     public class ItemConstant {
@@ -125,6 +149,29 @@ namespace IngameScript {
             { Item.Silver, new ItemConstant(Item.Silver, "Silver", "MyObjectBuilder_Ingot/Silver", "MyObjectBuilder_BlueprintDefinition/SilverOreToIngot", itemType: ItemType.Ingot) },
             { Item.Stone, new ItemConstant(Item.Stone, "Stone", "MyObjectBuilder_Ingot/Stone", "MyObjectBuilder_BlueprintDefinition/StoneOreToIngot", itemType: ItemType.Ore) },
             { Item.Uranium, new ItemConstant(Item.Uranium, "Uranium", "MyObjectBuilder_Ingot/Uranium", "MyObjectBuilder_BlueprintDefinition/UraniumOreToIngot", itemType: ItemType.Ingot) },
+
+            //{ Item.NatoMagazine556x45mm, new ItemConstant(Item.NatoMagazine556x45mm, "5.56x45mm NATO magazine", "MyObjectBuilder_AmmoMagazine/NATO_5p56x45mm", "", itemType: ItemType.Ammo) },
+            { Item.ArtilleryShell, new ItemConstant(Item.ArtilleryShell, "Artillery Shell", "MyObjectBuilder_AmmoMagazine/LargeCalibreAmmo", "MyObjectBuilder_BlueprintDefinition/Position0120_LargeCalibreAmmo", itemType: ItemType.Ammo) },
+            { Item.AssaultCannonShell, new ItemConstant(Item.AssaultCannonShell, "Assault Cannon Shell", "MyObjectBuilder_AmmoMagazine/MediumCalibreAmmo", "MyObjectBuilder_BlueprintDefinition/Position0110_MediumCalibreAmmo", itemType: ItemType.Ammo) },
+            { Item.AutocannonMagazine, new ItemConstant(Item.AutocannonMagazine, "Autocannon Magazine", "MyObjectBuilder_AmmoMagazine/AutocannonClip", "MyObjectBuilder_BlueprintDefinition/Position0090_AutocannonClip", itemType: ItemType.Ammo) },
+            { Item.FireworksBlue, new ItemConstant(Item.FireworksBlue, "Fireworks Blue", "MyObjectBuilder_AmmoMagazine/FireworksBoxBlue", "MyObjectBuilder_BlueprintDefinition/Position0007_FireworksBoxBlue", itemType: ItemType.Ammo) },
+            { Item.FireworksGreen, new ItemConstant(Item.FireworksGreen, "Fireworks Green", "MyObjectBuilder_AmmoMagazine/FireworksBoxGreen", "MyObjectBuilder_BlueprintDefinition/Position00071_FireworksBoxGreen", itemType: ItemType.Ammo) },
+            { Item.FireworksPink, new ItemConstant(Item.FireworksPink, "Fireworks Pink", "MyObjectBuilder_AmmoMagazine/FireworksBoxPink", "MyObjectBuilder_BlueprintDefinition/Position00074_FireworksBoxPink", itemType: ItemType.Ammo) },
+            { Item.FireworksRainbow, new ItemConstant(Item.FireworksRainbow, "Fireworks Rainbow", "MyObjectBuilder_AmmoMagazine/FireworksBoxRainbow", "MyObjectBuilder_BlueprintDefinition/Position00075_FireworksBoxRainbow", itemType: ItemType.Ammo) },
+            { Item.FireworksRed, new ItemConstant(Item.FireworksRed, "Fireworks Red", "MyObjectBuilder_AmmoMagazine/FireworksBoxRed", "MyObjectBuilder_BlueprintDefinition/Position00072_FireworksBoxRed", itemType: ItemType.Ammo) },
+            { Item.FireworksYellow, new ItemConstant(Item.FireworksYellow, "Fireworks Yellow", "MyObjectBuilder_AmmoMagazine/FireworksBoxYellow", "MyObjectBuilder_BlueprintDefinition/Position00073_FireworksBoxYellow", itemType: ItemType.Ammo) },
+            { Item.FlareGunClip, new ItemConstant(Item.FlareGunClip, "Flare Gun Clip", "MyObjectBuilder_AmmoMagazine/FlareClip", "MyObjectBuilder_BlueprintDefinition/Position0005_FlareGunMagazine", itemType: ItemType.Ammo) },
+            { Item.GatlingAmmoBox, new ItemConstant(Item.GatlingAmmoBox, "Gatling Ammo Box", "MyObjectBuilder_AmmoMagazine/NATO_25x184mm", "MyObjectBuilder_BlueprintDefinition/Position0080_NATO_25x184mmMagazine", itemType: ItemType.Ammo) },
+            { Item.LargeRailgunSabot, new ItemConstant(Item.LargeRailgunSabot, "Large Railgun Sabot", "MyObjectBuilder_AmmoMagazine/LargeRailgunAmmo", "MyObjectBuilder_BlueprintDefinition/Position0140_LargeRailgunAmmo", itemType: ItemType.Ammo) },
+            { Item.MR20RifleMagazine, new ItemConstant(Item.MR20RifleMagazine, "MR-20 Rifle Magazine", "MyObjectBuilder_AmmoMagazine/AutomaticRifleGun_Mag_20rd", "MyObjectBuilder_BlueprintDefinition/Position0040_AutomaticRifleGun_Mag_20rd", itemType: ItemType.Ammo) },
+            { Item.MR30ERifleMagazine, new ItemConstant(Item.MR30ERifleMagazine, "MR-30E Rifle Magazine", "MyObjectBuilder_AmmoMagazine/UltimateAutomaticRifleGun_Mag_30rd", "MyObjectBuilder_BlueprintDefinition/Position0070_UltimateAutomaticRifleGun_Mag_30rd", itemType: ItemType.Ammo) },
+            { Item.MR50ARifleMagazine, new ItemConstant(Item.MR50ARifleMagazine, "MR-50A Rifle Magazine", "MyObjectBuilder_AmmoMagazine/RapidFireAutomaticRifleGun_Mag_50rd", "MyObjectBuilder_BlueprintDefinition/Position0050_RapidFireAutomaticRifleGun_Mag_50rd", itemType: ItemType.Ammo) },
+            { Item.MR8PRifleMagazine, new ItemConstant(Item.MR8PRifleMagazine, "MR-8P Rifle Magazine", "MyObjectBuilder_AmmoMagazine/PreciseAutomaticRifleGun_Mag_5rd", "MyObjectBuilder_BlueprintDefinition/Position0060_PreciseAutomaticRifleGun_Mag_5rd", itemType: ItemType.Ammo) },
+            { Item.Rocket, new ItemConstant(Item.Rocket, "Rocket", "MyObjectBuilder_AmmoMagazine/Missile200mm", "MyObjectBuilder_BlueprintDefinition/Position0100_Missile200mm", itemType: ItemType.Ammo) },
+            { Item.S10PistolMagazine, new ItemConstant(Item.S10PistolMagazine, "S-10 Pistol Magazine", "MyObjectBuilder_AmmoMagazine/SemiAutoPistolMagazine", "MyObjectBuilder_BlueprintDefinition/Position0010_SemiAutoPistolMagazine", itemType: ItemType.Ammo) },
+            { Item.S10EPistolMagazine, new ItemConstant(Item.S10EPistolMagazine, "S-10E Pistol Magazine", "MyObjectBuilder_AmmoMagazine/ElitePistolMagazine", "MyObjectBuilder_BlueprintDefinition/Position0030_ElitePistolMagazine", itemType: ItemType.Ammo) },
+            { Item.S20APistolMagazine, new ItemConstant(Item.S20APistolMagazine, "S-20A Pistol Magazine", "MyObjectBuilder_AmmoMagazine/FullAutoPistolMagazine", "MyObjectBuilder_BlueprintDefinition/Position0020_FullAutoPistolMagazine", itemType: ItemType.Ammo) },
+            { Item.SmallRailgunSabot, new ItemConstant(Item.SmallRailgunSabot, "Small Railgun Sabot", "MyObjectBuilder_AmmoMagazine/SmallRailgunAmmo", "MyObjectBuilder_BlueprintDefinition/Position0130_SmallRailgunAmmo", itemType: ItemType.Ammo) },
         };
     }
 }

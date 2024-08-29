@@ -94,7 +94,7 @@ namespace IngameScript {
             };
 
             Ticker.Every5Seconds += requestCrafting;
-            Ticker.Every30Seconds += unclogAssemblersAndRefineries;
+            Ticker.Every5Seconds += unclogAssemblersAndRefineries;
         }
 
         public void Main(string argument, UpdateType updateSource) {

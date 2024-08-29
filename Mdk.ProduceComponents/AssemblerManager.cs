@@ -24,7 +24,13 @@ namespace IngameScript {
                 queue.AddRange(localQueue);
             }
 
-            return queue
+            List<MyProductionItem> knownRecipes = queue
+                .Where(e => DefinitionConstants.Components
+                    .Where(c => c.Value.RecipeDefId == e.BlueprintId)
+                    .Any()
+                ).ToList();
+
+            return knownRecipes
                 .GroupBy(element => element.BlueprintId)
                 .ToDictionary(
                     e => e.Key,

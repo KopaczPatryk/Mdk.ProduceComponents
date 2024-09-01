@@ -32,7 +32,7 @@ namespace IngameScript {
                 .Cast<IMyAssembler>().ToList();
         }
 
-        internal static void GetAllRefineries(IList<IMyTerminalBlock> lookAmong, out IList<IMyRefinery> refineries) {
+        public static void GetAllRefineries(IList<IMyTerminalBlock> lookAmong, out IList<IMyRefinery> refineries) {
             refineries = lookAmong
                 .Where(block => block is IMyRefinery)
                 .Cast<IMyRefinery>().ToList();

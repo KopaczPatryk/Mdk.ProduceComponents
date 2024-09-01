@@ -5,7 +5,9 @@ VisualStudioVersion = 17.10.35122.118
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Mdk.DiggsLib", "Mdk.DiggsLib\Mdk.DiggsLib.shproj", "{8A3CDCC5-4B55-4D87-A415-698A0E1FF06F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mdk.IceBase", "Mdk.IceBase\Mdk.IceBase.csproj", "{9654E7A2-EF07-49A0-A845-FBFF31E8EBA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mdk.IceBase", "Mdk.IceBase\Mdk.IceBase.csproj", "{9654E7A2-EF07-49A0-A845-FBFF31E8EBA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mdk.Settler1", "Mdk.Settler1\Mdk.Settler1.csproj", "{39CBA6B0-2BE4-4D38-835C-39C65DD231FD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{9654E7A2-EF07-49A0-A845-FBFF31E8EBA6}.Debug|x64.Build.0 = Debug|x64
 		{9654E7A2-EF07-49A0-A845-FBFF31E8EBA6}.Release|x64.ActiveCfg = Release|x64
 		{9654E7A2-EF07-49A0-A845-FBFF31E8EBA6}.Release|x64.Build.0 = Release|x64
+		{39CBA6B0-2BE4-4D38-835C-39C65DD231FD}.Debug|x64.ActiveCfg = Debug|x64
+		{39CBA6B0-2BE4-4D38-835C-39C65DD231FD}.Debug|x64.Build.0 = Debug|x64
+		{39CBA6B0-2BE4-4D38-835C-39C65DD231FD}.Release|x64.ActiveCfg = Release|x64
+		{39CBA6B0-2BE4-4D38-835C-39C65DD231FD}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -25,6 +31,7 @@ Global
 		SolutionGuid = {8A6672D6-5378-4719-8BE2-6B029C31FA7B}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Mdk.DiggsLib\Mdk.DiggsLib.projitems*{39cba6b0-2be4-4d38-835c-39c65dd231fd}*SharedItemsImports = 5
 		Mdk.DiggsLib\Mdk.DiggsLib.projitems*{8a3cdcc5-4b55-4d87-a415-698a0e1ff06f}*SharedItemsImports = 13
 		Mdk.DiggsLib\Mdk.DiggsLib.projitems*{9654e7a2-ef07-49a0-a845-fbff31e8eba6}*SharedItemsImports = 5
 	EndGlobalSection
